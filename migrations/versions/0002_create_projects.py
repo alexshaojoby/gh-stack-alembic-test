@@ -22,6 +22,7 @@ def upgrade() -> None:
         sa.Column("account_id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(length=200), nullable=False),
         sa.ForeignKeyConstraint(["account_id"], ["accounts.id"]),
+        sa.UniqueConstraint("account_id", "name", name="uq_projects_account_name"),
     )
 
 
