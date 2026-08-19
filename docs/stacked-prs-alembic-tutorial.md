@@ -244,8 +244,8 @@ Remote results on GitHub stack `#4`:
 | Position | Pull request | Head branch | Initial base | Result |
 | --- | --- | --- | --- | --- |
 | Bottom | [#1 Add projects migration](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/1) | `fact-17559-add-projects-migration` | `main` | Merged first with squash |
-| Middle | [#2 Add tasks migration](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/2) | `fact-17559-add-tasks-migration` | projects branch | Retargeted to `main` after #1 merged |
-| Top | [#3 Document stacked PR workflow](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/3) | `fact-17559-document-stacked-pr-workflow` | tasks branch | Remained above #2 |
+| Middle | [#2 Add tasks migration](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/2) | `fact-17559-add-tasks-migration` | projects branch | Retargeted to `main`, then merged with #3 |
+| Top | [#3 Document stacked PR workflow](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/3) | `fact-17559-document-stacked-pr-workflow` | tasks branch | Merged with #2 |
 
 Observed behavior:
 
@@ -255,6 +255,8 @@ Observed behavior:
 - A new commit on the bottom layer followed by `gh stack rebase --upstack` changed both upper commit IDs while preserving a linear stack and `needsRebase: false`.
 - `gh stack merge 1 --yes --squash` merged only #1. GitHub automatically retargeted #2 from the projects branch to `main` and rebased both remaining remote branches.
 - `gh stack sync --remote origin` fast-forwarded local `main`, skipped merged #1, rebased #2 and #3, pushed them, and retained the same GitHub stack.
+- `gh stack merge 3 --yes --squash` merged the contiguous #2 and #3 group into `main` in one operation.
+- The final push workflow passed, and `gh stack sync --remote origin --prune` removed all three merged local branches.
 
 ## Agent adoption
 
