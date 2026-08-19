@@ -239,7 +239,22 @@ Local results:
 - A temporary sibling `0003b` produced two heads and failed CI as expected.
 - An Alembic merge revision restored one head and passed upgrade and downgrade verification.
 
-Remote PR and stack observations are added after `gh stack submit --auto --open` completes.
+Remote results on GitHub stack `#4`:
+
+| Position | Pull request | Head branch | Initial base | Result |
+| --- | --- | --- | --- | --- |
+| Bottom | [#1 Add projects migration](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/1) | `fact-17559-add-projects-migration` | `main` | Merged first with squash |
+| Middle | [#2 Add tasks migration](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/2) | `fact-17559-add-tasks-migration` | projects branch | Retargeted to `main` after #1 merged |
+| Top | [#3 Document stacked PR workflow](https://github.com/alexshaojoby/gh-stack-alembic-test/pull/3) | `fact-17559-document-stacked-pr-workflow` | tasks branch | Remained above #2 |
+
+Observed behavior:
+
+- `gh stack submit --auto --open` created three ready-for-review PRs and linked them as stack `#4`.
+- The Stacks API and `gh stack view --json` returned the expected bottom-to-top branch chain.
+- GitHub ran the `pull_request` migration workflow for all three PRs; every `verify` job passed.
+- A new commit on the bottom layer followed by `gh stack rebase --upstack` changed both upper commit IDs while preserving a linear stack and `needsRebase: false`.
+- `gh stack merge 1 --yes --squash` merged only #1. GitHub automatically retargeted #2 from the projects branch to `main` and rebased both remaining remote branches.
+- `gh stack sync --remote origin` fast-forwarded local `main`, skipped merged #1, rebased #2 and #3, pushed them, and retained the same GitHub stack.
 
 ## Agent adoption
 
