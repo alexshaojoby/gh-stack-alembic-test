@@ -12,3 +12,8 @@ wheels/
 *.db
 *.sqlite
 *.sqlite3
+
+!.pi/
+!.pi/skills/
+!.pi/skills/gh-stack/
+!.pi/skills/gh-stack/SKILL.md
